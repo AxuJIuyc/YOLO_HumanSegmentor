@@ -5,11 +5,13 @@ cd YOLO_HumanSegmentor
 ```
 
 # Установить зависимости  
+Note: Будут установлены torch и nvidia_cuda (> 1.5 GB)
 ```
-pip install ./requirements.txt
+pip install -r ./requirements.txt
 ```
 
 # Запуск
 ```
 python image_processor.py
 ```
+Note: Прекратить воспроизведение можно по клавише `Q`
