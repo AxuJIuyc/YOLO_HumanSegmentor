@@ -30,12 +30,14 @@ class ImageProcessor:
         results = self.yolo_segmentation.segment_batch([image])[0]
         self.yolo_segmentation.visualize_results(image, results)
 
-    def process_batch(self, image_paths: list[str]) -> None:
+    def process_batch(self, image_paths: list[str]) -> list:
         """
         Обработка батча изображений и визуализация результатов
         
         Args:
             image_paths (list[str]): Список путей к изображениям для сегментации.
+        Returns:
+            list[np.ndarray]: Список обработанных изображений
         """
         images = [cv2.imread(image_path) for image_path in image_paths]
         if any(image is None for image in images):
@@ -43,12 +45,15 @@ class ImageProcessor:
 
         results_batch = self.model.segment_batch(images)
 
+        drowed_images = []
         for image, results in zip(images, results_batch):
             img = self.model.visualize_results(image, results)[:,:,::-1]
+            drowed_images.append(img)
             cv2.imshow('frame', img)
             if cv2.waitKey(3000) & 0xFF == ord('q'):
                 break
         cv2.destroyAllWindows()
+        return drowed_images
 
     def process_video(self, video_path: str) -> None:
         """
@@ -79,6 +84,16 @@ class ImageProcessor:
                 break
         cv2.destroyAllWindows()
 
+def save_results(images, path):
+    """
+    Функция сохранения обработанных изображений
+
+
+    """
+    for i, im in enumerate(images):
+        im_path = os.path.join(path, f"{i}.png")
+        cv2.imwrite(im_path, im)
+
 
 if __name__ == "__main__":
     # Пример использования
@@ -90,7 +105,8 @@ if __name__ == "__main__":
         os.path.join(imgpath, img) for img in os.listdir(imgpath) 
         if img.lower().endswith(('jpg', 'png', 'tiff', 'bmp', 'jpeg'))
     ]
-    processor.process_batch(images)
+    drawed = processor.process_batch(images)
+    save_results(drawed, 'results')
 
     # Обработка видео
     processor.process_video("data/lp_1.mp4")

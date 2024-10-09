@@ -94,7 +94,7 @@ class YOLOSeg:
         Оставляет только целевые классы
 
         Args:
-            list[dict]: Список обработанных результатов (маски, боксы, классы и вероятности).
+            results (list[dict]): Список обработанных результатов (маски, боксы, классы и вероятности).
         Returns:
             list[dict]: Список обработанных результатов (маски, боксы, классы и вероятности).
         """
@@ -132,13 +132,16 @@ class YOLOSeg:
 
         return processed_results
 
-    def visualize_results(self, image: np.ndarray, results: dict) -> None:
+    def visualize_results(self, image: np.ndarray, results: dict) -> np.ndarray:
         """
         Отображение результатов сегментации.
         
         Args:
             image (np.ndarray): Исходное изображение.
             results (dict): Результаты сегментации (маски, боксы, классы и вероятности).
+
+        Reurns:
+            np.ndarray: Изображение с отрисованными детекцями
         """
         masks = results.get("masks")
         boxes = results.get("boxes")
